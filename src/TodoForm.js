@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Todo from './TodoClass';
+import { TodoContext } from './TodoContext';
 
 export default class TodoForm extends Component{
     constructor(props){
@@ -30,26 +31,31 @@ export default class TodoForm extends Component{
     handleChange(event){
         this.setState({todoTitle: event.target.value});
     }
-s
+
     handleSubmit(event){
         event.preventDefault();
         const newTodo = new Todo(this.state.todoTitle,false);
         console.log(newTodo);
         this.setState({todoTitle: ''})
-        this.props.onTodoSubmit(newTodo);
-
         
     }
 
     render(){
         return(
-            <form onSubmit={this.handleSubmit}>
-                <label> 
-                    Todo Title:
-                        <input type="text" value={this.state.todoTitle} onChange={this.handleChange} ref={this.todoInput}/>
-                </label>
-                    <input type="submit" value="Submit" id="submitButton" ref={this.submitButton}/>
-            </form>
+            <TodoContext.Consumer>
+                {({todoList,addTodo}) =>(
+                    <form onSubmit={e => {
+                        addTodo(e,this.state.todoTitle);
+                        this.setState({todoTitle: ''});
+                        }}>
+                        <label> 
+                            Todo Title:
+                                <input type="text" value={this.state.todoTitle} onChange={this.handleChange} ref={this.todoInput}/>
+                        </label>
+                            <input type="submit" value="Submit" ref={this.submitButton} />
+                    </form>
+                )}
+            </TodoContext.Consumer>
         )
     }
 }
