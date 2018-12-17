@@ -5,27 +5,28 @@ export default class TodoLabel extends Component{
         super(props);
         this.isDone = this.props.isDone;
         this.onChecked = this.onChecked.bind(this);
+        this.label = React.createRef();
+        this.checkBox = React.createRef();
     }
 
     onChecked(){
-        const todoCheckBox = document.getElementById(this.props.todoLabel);
-        const todoLabel = document.getElementById('label' + this.props.todoLabel);
+        
         if(this.isDone){
-            todoCheckBox.checked = false;
+            this.checkBox.current.checked = false;
             this.isDone = false;
-            todoLabel.removeAttribute('class','barre');
+            this.label.current.removeAttribute('class','barre');
             return;
         }
-            todoCheckBox.checked = true;
+            this.checkBox.current.checked = true;
             this.isDone = true;
-            todoLabel.setAttribute('class','barre');
+            this.label.current.setAttribute('class','barre');
     }
 
     render(){
         return (
             <>
-                <input type="checkbox" id={this.props.todoLabel} name={this.props.todoLabel} onClick={this.onChecked}></input>
-                <label id={'label' + this.props.todoLabel}>{this.props.todoLabel}</label>
+                <input type="checkbox"  name={this.props.todoLabel} onClick={this.onChecked} ref={this.checkBox}></input>
+                <label ref={this.label}>{this.props.todoLabel}</label>
             </>
         )
     }
