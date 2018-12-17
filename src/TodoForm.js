@@ -43,7 +43,7 @@ export default class TodoForm extends Component{
     render(){
         return(
             <TodoContext.Consumer>
-                {({todoList,addTodo}) =>(
+                {({addTodo}) =>(
                     <form onSubmit={e => {
                         addTodo(e,this.state.todoTitle);
                         this.setState({todoTitle: ''});
