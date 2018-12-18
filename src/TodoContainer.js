@@ -1,48 +1,36 @@
 import React, { Component } from 'react';
 import TodoForm from './TodoForm';
 import TodoList from './TodoList';
-import {TodoContext,todos} from './TodoContext';
-import Todo from './TodoClass';
+import { resetTodo } from './Todo.action';
+import { connect } from 'react-redux';
         
-export default class TodoContainer extends Component{
+export class TodoContainer extends Component{
     
-    constructor(props){
-        super(props);
-
-        this.addTodo = (e,newTodoTitle) => {
-            e.preventDefault();
-            this.setState({tdl: [...this.state.tdl,new Todo(newTodoTitle,false)]});
-        }
-
-        this.state ={
-          tdl : todos,
-          addTodo : this.addTodo,  
-        }
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.onReset = this.onReset.bind(this);
-      }
-    
-      handleSubmit(newTodo){
-        this.setState({tdl: [...this.state.tdl,newTodo]});
-      }
-
-      onReset(){
-        this.setState({tdl: []});
-      }
-
     render(){
         return (
         <div>
             <div>
-                <TodoList todoList={this.state.tdl}/>
-                <input type="submit" value="Reset" id="submitButton" onClick={this.onReset}/>
+                <TodoList/>
+                <button type="submit"  onClick={this.props.resetTodo}> RESET </button>
             </div>
             <div>
-                <TodoContext.Provider value={this.state}>
-                    <TodoForm onTodoSubmit={this.handleSubmit}/>
-                </TodoContext.Provider>
+                <TodoForm />
             </div>
         </div>
             );
     }
 }
+
+const mapStateToProps = state => ({
+    todos: state.todo.list,
+    loading: state.todo.loading,
+});
+
+const mapDispatchToProps = dispatch => ({
+    resetTodo: () => dispatch(resetTodo()),
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(TodoContainer)

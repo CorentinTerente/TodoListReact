@@ -1,61 +1,67 @@
 import React, { Component } from 'react';
-import Todo from './TodoClass';
-import { TodoContext } from './TodoContext';
+import { addTodo } from './Todo.action';
+import { connect } from 'react-redux';
 
-export default class TodoForm extends Component{
-    constructor(props){
+export class TodoForm extends Component {
+    constructor(props) {
         super(props)
 
         this.state = {
-            todoTitle: ''                
+            todoTitle: ''
         }
 
         this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
         this.submitButton = React.createRef()
     }
 
-    componentDidMount(){
-       this.submitButton.current.disabled = true;
-        
+    componentDidMount() {
+        this.submitButton.current.disabled = true;
+
     }
 
-    componentDidUpdate(){
-        if(this.state.todoTitle.length >= 4){
+    componentDidUpdate() {
+        if (this.state.todoTitle.length >= 4) {
             this.submitButton.current.disabled = false;
-            return;     
+            return;
         }
         this.submitButton.current.disabled = true;
     }
 
-    handleChange(event){
-        this.setState({todoTitle: event.target.value});
+    handleChange(event) {
+        this.setState({ todoTitle: event.target.value });
     }
 
-    handleSubmit(event){
-        event.preventDefault();
-        const newTodo = new Todo(this.state.todoTitle,false);
-        console.log(newTodo);
-        this.setState({todoTitle: ''})
-        
-    }
 
-    render(){
-        return(
-            <TodoContext.Consumer>
-                {({addTodo}) =>(
-                    <form onSubmit={e => {
-                        addTodo(e,this.state.todoTitle);
-                        this.setState({todoTitle: ''});
-                        }}>
-                        <label> 
-                            Todo Title:
-                                <input type="text" value={this.state.todoTitle} onChange={this.handleChange} ref={this.todoInput}/>
-                        </label>
-                            <input type="submit" value="Submit" ref={this.submitButton} />
-                    </form>
-                )}
-            </TodoContext.Consumer>
+    render() {
+        return (
+
+            <form onSubmit={(e) => {
+                e.preventDefault();
+                this.setState({ todoTitle: '' });
+                this.props.addTodo(this.state.todoTitle)
+            }}>
+                <label>
+                    Todo Title:
+                        <input type="text" value={this.state.todoTitle} onChange={this.handleChange} ref={this.todoInput} />
+                </label>
+                <input type="submit" value="Submit" ref={this.submitButton} />
+            </form>
         )
     }
+
 }
+
+
+const mapStateToProps = state => ({
+    todos: state.todo.list,
+    loading: state.todo.loading,
+});
+
+const mapDispatchToProps = dispatch => ({
+    addTodo: name => dispatch(addTodo(name)),
+})
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(TodoForm)
